@@ -138,4 +138,5 @@ test legacy:
     DEBUG_LINK: "1"
   script:
     - cd legacy
+    - ls firmware/trezor.elf
     - pipenv run script/test
