@@ -149,8 +149,8 @@ class MnemonicKeyboard(ui.Widget):
                 return
 
     def edit(self, content, button=None, index=0):
-        word = slip39.find_word(content, True) or ""
-        mask = slip39.complete_word(content, True)
+        word = slip39.find_word(content, False) or ""
+        mask = slip39.complete_word(content, False)
 
         self.pbutton = button
         self.pindex = index
