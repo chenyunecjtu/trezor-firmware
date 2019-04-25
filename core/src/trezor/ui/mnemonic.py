@@ -43,9 +43,10 @@ class Input(Button):
             self.active_style = ui.BTN_KEY_CONFIRM["active"]
             self.icon = ui.ICON_CONFIRM
         elif word:  # auto-complete button
-            self.disable()
+            self.enable()
             self.normal_style = ui.BTN_KEY["normal"]
-            self.disabled_style = ui.BTN_KEY["normal"]
+            self.active_style = ui.BTN_KEY["active"]
+            self.icon = ui.ICON_CLICK
         else:  # disabled button
             self.disable()
             self.icon = None
@@ -60,7 +61,7 @@ class Input(Button):
 
         t = self.content  # input content
         i = self.icon  # rendered icon
-        w = ""
+        w = self.word[len(t) :]  # suggested word
 
         tx = ax + 24  # x-offset of the content
         ty = ay + ah // 2 + 8  # y-offset of the content
@@ -69,6 +70,12 @@ class Input(Button):
         display.text(tx, ty, t, text_style, fg_color, bg_color)
         width = display.text_width(t, text_style)
         display.text(tx + width, ty, w, text_style, ui.GREY, bg_color)
+
+        # p = self.pending
+        if len(t) < 4:  # pending marker
+            pw = display.text_width(t, text_style)
+            px = tx + width - pw
+            display.bar(px, ty + 2, pw + 1, 3, fg_color)
 
         if i:  # icon
             ix = ax + aw - ICON * 2
@@ -97,10 +104,7 @@ class MnemonicKeyboard(ui.Widget):
 
     def render(self):
         if self.input.content:
-            if len(self.input_content) > 3:
-                self.input.content = self.input_content
-            else:
-                self.input.content = "*" * len(self.input_content)
+            self.input.content = self.input_content
             # content button and backspace
             self.input.render()
             self.back.render()
@@ -152,6 +156,7 @@ class MnemonicKeyboard(ui.Widget):
         self.pindex = index
         self.input_content = word[:len(content)]
         self.input.edit(content, word, button is not None)
+
         # enable or disable key buttons
         if len(content) > 3:
             mask = 0
